@@ -1,14 +1,14 @@
 import mongoose from "mongoose"
 
 const postSchema = new mongoose.Schema({
-    caption:{
-        type:String,
-        required:true
-    },
     creator:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
+    },
+    caption:{
+        type:String,
+        required:true
     },
     postPhoto:{
         type:String,

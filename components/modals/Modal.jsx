@@ -16,8 +16,8 @@ import Loader from "../Loader";
 export default function Modal({ setOpen, open }) {
   const { data: session } = useSession();
   const [field, setField] = useState("");
-  const [photo, setPhoto] = useState("");
-  const [imageUrl,setImageUrl] = useState("");
+  
+  const [imageUrl,setImageUrl] = useState(null);
   // const [loading, setLoading] = useState(true);
 
   //post action function
@@ -26,10 +26,18 @@ export default function Modal({ setOpen, open }) {
 
     try {
       const data = new FormData();
-      data.append("postImg",imageUrl)
-      console.log(imageUrl);
-      data.append("text",field)
-      await createPostAction(data,session.user._id)
+      data.set("postImg",imageUrl)
+      data.set("caption",field)
+      data.set("userId",session.user._id)
+       
+      const res = await fetch("/api/create",{
+        method: "POST",
+        body: data
+      })
+      const response = await res.json();
+      if(response.ok){
+        alert("post created successfuly")
+      }
       // setLoading(false)
     } catch (error) {
       console.log('error occurred', error);
@@ -39,11 +47,7 @@ export default function Modal({ setOpen, open }) {
     // setOpen(false);
   }
 
-  
-  const handleImageChange = (e) => {
-    setImageUrl(e.target.files[0])
-     console.log(imageUrl);
-  }
+
 
   return (
       <Dialog
@@ -67,9 +71,9 @@ export default function Modal({ setOpen, open }) {
               <Button className="bg-blue-500 rounded-full text-white block ml-auto mt-3">
                 Post
               </Button>
-              {imageUrl && 
-                <Image src={imageUrl} width={400} height={400}/>
-                }
+              {/* {imageUrl && 
+                <Image src={URL.createObjectURL(imageUrl[0])} width={400} height={400}/>
+                } */}
               <div className="flex hover:bg-accent transition duration-200 mt-2 items-center justify-center p-2 rounded-md cursor-pointer">
                 <label
                   htmlFor="file"
@@ -77,7 +81,7 @@ export default function Modal({ setOpen, open }) {
                 >
                   <Image className="text-blue-400" />
                   <span>Media</span>
-                  <input type="file" id="file" onChange={(e)=> handleImageChange(e)} hidden />
+                  <input type="file" id="file" onChange={(e)=>  setImageUrl(e.target.files?.[0])} hidden />
                 </label>
               </div>
             </form>

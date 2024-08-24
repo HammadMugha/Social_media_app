@@ -35,7 +35,7 @@ export default function Post({ post }) {
         </div>
         <div className="">
           {session?.user && (
-            <Button onClick={()=> deletePostAction(post?._id,session?.user?.uid)} variant={"secondary"} className={"rounded-full"}>
+            <Button onClick={()=> deletePostAction(post?._id,session?.user._id)} variant={"secondary"} className={"rounded-full"}>
               <Trash2 size={20} />
             </Button>
           )}

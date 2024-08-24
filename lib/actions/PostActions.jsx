@@ -21,7 +21,8 @@ export async function getAllPosts() {
 
     return JSON.parse(JSON.stringify(Posts));
   } catch (error) {
-    throw new Error("Error", error);
+    // throw new Error("Error", error);
+    console.log(error);
   }
 }
 //POST actions
@@ -69,8 +70,10 @@ export async function deletePostAction(postId, userId) {
   await ConnectDB();
   const post = await Post.findById(postId);
   if (!post) throw new Error("Post not found.");
-  if (post.user.userId !== userId)
-    throw new Error("you are not allowed to delete a post");
+  // if (post.creator !== userId){
+  //   throw new Error("you are not owner of this post")
+  // }
+    
   try {
     await Post.deleteOne({ _id: postId });
     revalidatePath("/");

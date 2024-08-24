@@ -10,8 +10,8 @@ export default function SocialPost({ session, post }) {
       if (!session.user) throw new Error(' User not athenticated');
       const tempLiked = liked;
       const tempLikes = likes;
-      const dislike = likes?.filter((userId) => userId !== session.user.uid);
-      const like = [...(likes ?? []), session.user.uid];
+      const dislike = likes?.filter((userId) => userId !== session.user._id);
+      const like = [...(likes ?? []), session.user._id];
       const newLike = liked ? dislike : like;
 
       setLiked(!liked);
@@ -22,7 +22,7 @@ export default function SocialPost({ session, post }) {
           headers: {
               'Content-Type': "application/json"
           },
-          body: JSON.stringify(session.user.uid),
+          body: JSON.stringify(session.user._id),
       });
       if (!res.ok) {
           setLiked(tempLiked);
@@ -69,7 +69,7 @@ export default function SocialPost({ session, post }) {
         </div>
       </div>
       {/* comment box */}
-      {commentOpen && <CommentInput session={session} />}
+      {commentOpen && <CommentInput session={session} postId={post._id} />}
     </div>
   );
 }

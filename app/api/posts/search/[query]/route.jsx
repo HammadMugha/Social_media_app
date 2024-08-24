@@ -6,7 +6,7 @@ export async function GET(request, { params }) {
   await ConnectDB();
   const { query } = params;
   try {
-    const posts = await Post.find({text: {$regex:query,$options:"i"}})
+    const posts = await Post.find({caption: {$regex:query,$options:"i"}})
 
     return NextResponse.json({ data: posts });
   } catch (error) {

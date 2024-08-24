@@ -3,11 +3,11 @@ import { Post } from "@/constants/models/Post";
 import { NextResponse } from "next/server";
 
 //GET LIKES API
-export async function GET({params}) {
+export async function GET(req,{params}) {
   await ConnectDB();
-  // const {postId} = request.json();
-  const post = await Post.findById({ _id: params.postId })
-  if (!post) return NextResponse.json({ error: "Post not found." });
+  const postId = params.postId
+  const post = await Post.findById({ _id: postId })
+  if (!post) return NextResponse.json({ message: "Post not found.",status: 404});
   try {
     return NextResponse.json(post.likes)
   } catch (error) {
@@ -16,10 +16,10 @@ export async function GET({params}) {
 }
 
 //POST LIKES API
-export async function POST(request,{params}) {
+export async function POST(req,{params}) {
   try {
     await ConnectDB();
-    const { userId } = await request.json();
+    const userId = await req.json();
     const post = await Post.findById({ _id: params.postId });
     if (!post) return NextResponse.json({ message: "Post not found." });
     await post.updateOne({ $addToSet: { likes: userId } });

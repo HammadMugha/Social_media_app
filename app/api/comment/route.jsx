@@ -1,45 +1,25 @@
-import Comment from "@/constants/models/Comment";
+import { ConnectDB } from "@/constants/connectDB";
+import { Comment } from "@/constants/models/Comment";
+
 import { Post } from "@/constants/models/Post";
+import { NextResponse } from "next/server";
 
 export async function POST(request) {
-  const { postId, commentText, user } = await request.json();
-  if (!commentText) throw new Error("comment text is required");
-  const userLogin = {
-    userId: user.uid,
-    profilePhoto: user.image,
-    firstName: user.name,
-    email: user.email,
-  };
-  const post = await Post.findById({ _id: postId });
-  if (!post) throw new Error("No post found");
-
   try {
-    const comment = await Comment.create({
-      text: commentText,
-      user: userLogin,
-    });
-
-    post.comments.push(comment._id);
-    await post.save();
-  } catch (error) {
-    return NextResponse.json({ error: "An error occurred." });
-  }
-}
-
-//GET COMMENTS API
-export async function GET(request) {
-  try {
-    const { postId } = await request.json();
+    await ConnectDB();
+    const { userId, comment, postId } = await request.json();
     const post = await Post.findById({ _id: postId });
-    if (!post) throw new Error("No post found");
+        if (!post) throw new Error('Post not found');
+    console.log(userId, comment, postId);
+    const CommentCreate = await Comment.create({ comment, creator: userId });
 
-    const comments = await post.populate({
-        path: "comments",
-        options: {sort: {createdAt: -1} },
-      });
+    post.comments?.push(CommentCreate._id);
 
-      return NextResponse.json({data:comments})
+    await post.save();
+    return NextResponse.json({
+      message: "comment created successfully",
+    });
   } catch (error) {
-    return NextResponse.json({ error: "An error occurred." });
+    return NextResponse({ error: error, message: "something went wrong" });
   }
 }

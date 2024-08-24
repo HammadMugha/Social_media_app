@@ -19,7 +19,7 @@ export default function Sidebar() {
         />
       </div>
       <div className="mt-[-20px] flex flex-col items-center justify-center pb-3">
-        <Link href={'/'} className="flex items-center justify-center flex-col">
+        <Link href={'/profile'} className="flex items-center justify-center flex-col">
         <div className="relative w-[50px] rounded-full h-[50px] object-cover">
           <ImageCom src={session?.user?.image} />
         </div>
